@@ -1,0 +1,176 @@
+- node:
+    edges:
+    - edge_id: WayPoint1_WayPoint7
+      node: WayPoint7
+    name: WayPoint1
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: -6.949999999999999
+        y: -2.6499999999999986
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint2_WayPoint7
+      node: WayPoint7
+    name: WayPoint2
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: -2.8999999999999995
+        y: -3.349999999999998
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint3_WayPoint7
+      node: WayPoint7
+    name: WayPoint3
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: -0.25
+        y: -3.2499999999999982
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint4_WayPoint7
+      node: WayPoint7
+    name: WayPoint4
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: 2.200000000000001
+        y: -3.349999999999998
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint5_WayPoint6
+      node: WayPoint6
+    name: WayPoint5
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: 5.050000000000001
+        y: -3.299999999999997
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint6_WayPoint5
+      node: WayPoint5
+    - edge_id: WayPoint6_WayPoint7
+      node: WayPoint7
+    - edge_id: WayPoint6_WayPoint10
+      node: WayPoint10
+    name: WayPoint6
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: 5.300000000000001
+        y: -0.7499999999999982
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint7_WayPoint1
+      node: WayPoint1
+    - edge_id: WayPoint7_WayPoint2
+      node: WayPoint2
+    - edge_id: WayPoint7_WayPoint3
+      node: WayPoint3
+    - edge_id: WayPoint7_WayPoint4
+      node: WayPoint4
+    - edge_id: WayPoint7_WayPoint6
+      node: WayPoint6
+    - edge_id: WayPoint7_WayPoint9
+      node: WayPoint9
+    - edge_id: WayPoint7_WayPoint8
+      node: WayPoint8
+    name: WayPoint7
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: -0.7999999999999989
+        y: -0.7999999999999972
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint8_WayPoint7
+      node: WayPoint7
+    name: WayPoint8
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: -1.4499999999999993
+        y: 2.5500000000000025
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint9_WayPoint7
+      node: WayPoint7
+    name: WayPoint9
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: 2.1500000000000004
+        y: 2.7500000000000027
+        z: 0.0
+- node:
+    edges:
+    - edge_id: WayPoint10_WayPoint6
+      node: WayPoint6
+    name: WayPoint10
+    pointset: NA
+    pose:
+      orientation:
+        w: 1.0
+        x: 0.0
+        y: 0.0
+        z: 0.0
+      position:
+        x: 6.449999999999999
+        y: 3.5500000000000025
+        z: 0.0
