@@ -22,6 +22,7 @@ class Toponavigator(object):
     
     def __init__(self, robot, yaml):
         self.yaml = yaml
+        self.logging = yaml['logging']
         
         if robot.startswith('/'):
             name = robot
@@ -98,7 +99,7 @@ class Toponavigator(object):
             
             self.robot.latest_goal = self.robot.current_goal.name
         
-        print colored('%s: end goal reached' % self.robot.ns, 'green')
+        self.log('%s: %s reached' % (self.robot.ns, self.robot.final_goal.name), 'green')
         self.robot.state = self.READY
         self.robot.final_goal = None
 
@@ -159,12 +160,12 @@ class Toponavigator(object):
     #     # self.robot.afference = afference
     #     # self.robot.distance = afference_dist
     #
-    #     return {
-    #         'mode': 'euclidean',
-    #         'afference': afference,
-    #         'ip_posit': ip_pos_debug,
-    #         'dist': afference_dist
-    #     }
+    #     # return {
+    #     #     'mode': 'euclidean',
+    #     #     'afference': afference,
+    #     #     'ip_posit': ip_pos_debug,
+    #     #     'dist': afference_dist
+    #     # }
 
     def movebase_afference(self, amcl_pose):
         while not rospy.has_param(self.yaml['interest_points']):
@@ -173,7 +174,7 @@ class Toponavigator(object):
     
         afference_dist = float('inf')
         afference = None
-        # ip_pos_debug = None  # debug
+        # ip_pos_debug = None
         for ip in ipoints:
             ip_pose = self.get_ip_posestamp(ip)
             
@@ -186,7 +187,7 @@ class Toponavigator(object):
                 if path_length <= afference_dist:
                     afference_dist = path_length
                     afference = ip['name']
-                    # ip_pos_debug = ip_pose.pose.position
+                    # ip_pos_debug = Point(ip['pose']['position']['x'], ip['pose']['position']['y'], 0)
             except rospy.ServiceException as e:
                 print "Make_plan call failed: %s" % e
     
@@ -241,6 +242,10 @@ class Toponavigator(object):
         ip_pose.pose = Pose(Point(ip_x, ip_y, ip_z), Quaternion(0, 0, 0, 1))
         
         return ip_pose
+
+    def log(self, msg, color, attrs=None):
+        if self.logging:
+            print colored(msg, color=color, attrs=attrs)
 
 
 def parse_args():

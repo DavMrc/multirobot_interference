@@ -1,0 +1,200 @@
+#!/usr/bin/env python
+
+import rospy
+import numpy as np
+import matplotlib.pyplot as plt
+import tkinter as tk
+import tkMessageBox
+import time
+import subprocess
+import pickle
+import tkFont
+
+from destination import Destination
+from prettytable import PrettyTable
+
+
+DEFAULT_PATH = '/home/davide/ros_ws/src/learning/learning_toponav/idleness/'
+
+
+class IdlenessLogger(object):
+    def __init__(self, dest_list, environment, robots_num, path=DEFAULT_PATH):
+        if all(isinstance(d, Destination) for d in dest_list):
+            self.dest_list = dest_list
+        else:
+            raise ValueError("Items of dest_list aren't of type <Destination>")
+        self.path = path
+        self.environment = environment  # office, house ...
+        self.robots_num = robots_num
+        self.tk_root = tk.Tk()
+    
+    def show_confirm_gui(self):
+        self.tk_root.title("Dump destinations")
+        self.tk_root.geometry("320x200")
+        self.tk_root.eval('tk::PlaceWindow %s center' % self.tk_root.winfo_toplevel())
+        
+        pop = subprocess.Popen(["wmctrl", "-r", "Dump destinations", "-b", "add,above"])
+        pop.communicate()
+        
+        msg = "Do you want to save\n the observed idlenesses\n of the destinations?"
+        font = tkFont.Font(family="Helvetica", size=14)
+        
+        label = tk.Label(self.tk_root, text=msg, font=font)
+        label.pack(side="top", fill="both", expand=True, padx=20, pady=20)
+        
+        frame = tk.Frame(self.tk_root).pack(side="bottom", expand=True)
+        
+        button = tk.Button(frame, text="OK", command=lambda: self.write_statfile())
+        button.pack(side="left", fill="none", expand=True, padx=5, pady=5)
+        
+        button = tk.Button(frame, text="Cancel", command=lambda: self.tk_root.destroy())
+        button.pack(side="right", fill="none", expand=True, padx=5, pady=5)
+        
+        self.tk_root.mainloop()
+    
+    def write_statfile(self):
+        # datetime = time.strftime("%d-%m@%H:%M", time.localtime())
+        # filename = "%s-%s-%sbots.txt" % (datetime, self.environment, self.robots_num)
+        #
+        # lines = []
+        # statistics = {}
+        # total_visits = 0
+        # for d in self.dest_list:
+        #     d.force_shutdown()
+        #
+        #     idlenesses = d.get_stats()
+        #     total_visits += len(idlenesses)
+        #
+        #     idlenesses_str = [i.get_estimate_index(_type=str) for i in idlenesses]
+        #     line = d.name + ': ' + ', '.join(idlenesses_str) + '\n'
+        #     lines.append(line)
+        #
+        #     prolongued_idl = [i.get_true() for i in idlenesses]
+        #     statistics[d.name] = {
+        #         'mean': round(np.mean(prolongued_idl), 3),
+        #         'max': np.max(prolongued_idl),
+        #         'min': np.min(prolongued_idl)
+        #     }
+        #
+        # means = [d['mean'] for d in statistics.values()]
+        # average_idl = round(np.mean(means), 3)
+        # variance_average_idl = round(np.var(means), 3)
+        #
+        # separator = "-----------\n"
+        # lines = sorted(lines)
+        # lines.append(separator + json.dumps(statistics, indent=2) + '\n')
+        # lines.append(separator + "Average idleness: %s\n" % average_idl)
+        # lines.append(separator + "Variance idleness: %s\n" % variance_average_idl)
+        # lines.append(separator + "Total visits: %s\n" % total_visits)
+        #
+        # file = open(self.path+filename, 'w')
+        # file.writelines(lines)
+        datetime = time.strftime("%d-%m@%H:%M", time.localtime())
+        subdir = "%s/" % self.robots_num
+        filename = "%s-%s-%sbots.txt" % (datetime, self.environment, self.robots_num)
+        
+        self.write_dumpfile(subdir, filename)
+        
+        lines = []
+        pt = PrettyTable()
+        pt.field_names = ['Dest name', 'true', 'remaining', 'estimated', 'path_len', 'mean', 'max', 'min']
+        
+        total_visits = 0
+        means = []
+        for d in sorted(self.dest_list, key=lambda dest: dest.name):
+            d.force_shutdown()
+            
+            observations = d.get_stats()
+            true_idls = [o.idleness.get_true() for o in observations]
+            
+            # try:
+            # if len(idlenesses) > 0:
+            mean = round(np.mean(true_idls), 3)
+            min = round(np.min(true_idls), 3)
+            max = round(np.max(true_idls), 3)
+        
+            means.append(mean)
+            total_visits += d.get_visits_num()
+            
+            for i in range(len(observations)):
+                idl = observations[i].idleness
+                if i == 0:
+                    pt.add_row([
+                        d.name, idl.get_true(),
+                        idl.get_remaining(), idl.get_estimated(), observations[i].path_len, mean, max, min
+                    ])
+                else:
+                    pt.add_row([
+                        '', idl.get_true(),
+                        idl.get_remaining(), idl.get_estimated(),observations[i].path_len, '', '', ''
+                    ])
+            # else:
+            #     rospy.logerr("%s idlenesses empty" % d.name)
+            # except ValueError:
+            #     rospy.logwarn("Something wrong while calculating idlenesses stats")
+            #     print true_idls
+        
+        separator = "-----------\n"
+        lines.append(pt.__str__())
+        lines.append("\nAverage idleness: %s\n" % round(np.mean(means), 3))
+        lines.append(separator + "Variance idleness: %s\n" % round(np.var(means), 3))
+        lines.append(separator + "Total visits: %s\n" % total_visits)
+        
+        file = open(self.path + subdir + filename, 'w')
+        file.writelines(lines)
+        
+        rospy.loginfo('Destination idlenesses have been wrote to %s' % self.path)
+        self.tk_root.destroy()
+    
+    def write_dumpfile(self, subdir, filename):
+        name = filename.split('.')
+        name.insert(1, '_DUMP.')
+        _filename = ''.join(name)
+        
+        dests = []
+        for d in sorted(self.dest_list, key=lambda dest: dest.name):
+            dests.append(d)
+        
+        f = open(self.path + "dumps/" + subdir + _filename, 'w')
+        pickle.dump(dests, f)
+        f.close()
+
+
+class IdlenessAnalizer(object):
+    def __init__(self, filename, path_to_pickled=DEFAULT_PATH+"dumps/"):
+        if not type(filename) == str:
+            raise Exception("Filename not of type str")
+        try:
+            self.destinations = pickle.load(open(path_to_pickled+filename, 'rb'))
+        except IOError as e:
+            dump_suffix = "_DUMP.txt"
+            
+            if not filename.endswith(dump_suffix):
+                name = filename.split(".")
+                self.destinations = pickle.load(open(path_to_pickled + name[0]+dump_suffix, 'rb'))
+
+    def plot_interference_index(self):
+        # d = self.destinations[0]
+        idls = []
+        
+        for d in self.destinations:
+            for i in d.get_stats():
+                if not i.is_null():
+                    idls.append(i)
+        
+        rems = [i.get_remaining() for i in idls]
+        ests = [i.get_estimated() for i in idls]
+
+        plt.plot(rems, ests, 'ro')
+        plt.axis([0, 60, 0, 60])
+        plt.xlabel("Remaining idleness")
+        plt.ylabel("Estimated idleness")
+        
+        plt.show()
+        
+
+if __name__ == '__main__':
+    subdir = "3/"
+    filename = "05-02@11:32-office-3bots_DUMP.txt"
+    ia = IdlenessAnalizer(filename=subdir+filename)
+    ia.plot_interference_index()
