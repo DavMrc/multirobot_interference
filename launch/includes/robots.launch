@@ -9,7 +9,7 @@
 
     <!--robot 1-->
     <group ns="robot_1">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_1" />
             <arg name="color" value="'1 0 0 1'" /> <!--red-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -23,7 +23,7 @@
 
     <!--robot 2-->
     <group ns="robot_2">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_2" />
             <arg name="color" value="'0 0 1 1'" /> <!--blue-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -37,7 +37,7 @@
 
     <!--robot 3-->
     <group ns="robot_3">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_3" />
             <arg name="color" value="'0.9 0.9 0 1'" />  <!--yellow-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -51,7 +51,7 @@
 
     <!--robot 4-->
     <group ns="robot_4">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_4" />
             <arg name="color" value="'0 1 0 1'" /> <!--green-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -65,7 +65,7 @@
 
     <!--robot 5-->
     <group ns="robot_5">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_5" />
             <arg name="color" value="'1 0 1 1'" /> <!--purple-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -79,7 +79,7 @@
 
     <!--robot 6-->
     <group ns="robot_6">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_6" />
             <arg name="color" value="'1 0.6 0 1'" /> <!--orange-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -93,7 +93,7 @@
 
     <!--robot 7-->
     <group ns="robot_7">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_7" />
             <arg name="color" value="'0 0.8 1 1'" /> <!--cyan-->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -108,7 +108,7 @@
 
     <!--robot 8-->
     <group ns="robot_8">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="robot_8" />
             <arg name="color" value="'1 0 0.5 1'" /> <!--pink-->
             <arg name="config_yaml" value="$(arg config_yaml)" />

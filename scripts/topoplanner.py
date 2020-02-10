@@ -12,7 +12,7 @@ from termcolor import colored
 from robot import Robot
 from threading import Thread
 from geometry_msgs.msg import PoseStamped, Pose, Point, Quaternion
-from learning_toponav.msg import *
+from multirobot_interference.msg import *
 from destination import Destination
 from idleness_analysis import IdlenessLogger
 from std_msgs.msg import Header

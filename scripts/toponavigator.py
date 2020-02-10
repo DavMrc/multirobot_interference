@@ -10,7 +10,7 @@ from robot import Robot
 from termcolor import colored
 from threading import Thread
 from prettytable import PrettyTable
-from learning_toponav.msg import *
+from multirobot_interference.msg import *
 from std_msgs.msg import Header, String
 from nav_msgs.srv import GetPlan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, Pose, Point, Quaternion

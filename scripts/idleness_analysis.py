@@ -16,7 +16,7 @@ from destination import Destination
 from prettytable import PrettyTable
 
 
-DEFAULT_PATH = '/home/davide/ros_ws/src/learning/learning_toponav/idleness/'
+DEFAULT_PATH = '/home/davide/ros_ws/src/learning/multirobot_interference/idleness/'
 
 
 class IdlenessLogger(object):

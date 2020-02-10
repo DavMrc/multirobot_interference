@@ -5,16 +5,16 @@
     <arg name="robot_4" value="robot_4" />
 
     <arg name="environment" default="house" />
-    <arg name="metric_map" default="$(find learning_toponav)/maps/$(arg environment)/metric.yaml" />
-    <arg name="topomap" default="$(find learning_toponav)/maps/$(arg environment)/topomap.tpg" />
-    <arg name="config_yaml" default="$(find learning_toponav)/param/config.yaml" />
-    <arg name="rviz_config" default="-d $(find learning_toponav)/rviz/multi_toponav.rviz" />
+    <arg name="metric_map" default="$(find multirobot_interference)/maps/$(arg environment)/metric.yaml" />
+    <arg name="topomap" default="$(find multirobot_interference)/maps/$(arg environment)/topomap.tpg" />
+    <arg name="config_yaml" default="$(find multirobot_interference)/param/config.yaml" />
+    <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/multi_toponav.rviz" />
     <arg name="gazebo_gui" default="false" /> <!-- ACTIVATE GAZEBO GUI -->
     <arg name="rqt_console" default="false" /> <!-- LAUNCH RQT CONSOLE -->
 
     <!-- GAZEBO -->
-    <include file="$(find learning_toponav)/launch/includes/main_gazebo.launch">
-        <arg name="world_name" value="$(find learning_toponav)/worlds/$(arg environment).world"/>
+    <include file="$(find multirobot_interference)/launch/includes/main_gazebo.launch">
+        <arg name="world_name" value="$(find multirobot_interference)/worlds/$(arg environment).world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="$(arg gazebo_gui)"/>
@@ -29,13 +29,13 @@
     <node pkg="map_server" type="map_server" name="map_loader" args="$(arg metric_map)" />
 
     <!--toponodes publisher-->
-    <node pkg="learning_toponav" type="toponodes_publisher.py" name="toponodes_publisher"
+    <node pkg="multirobot_interference" type="toponodes_publisher.py" name="toponodes_publisher"
           args="--topomap $(arg topomap) --yaml $(arg config_yaml)"
     />
 
     <!--robot 1-->
     <group ns="$(arg robot_1)">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="$(arg robot_1)" />
             <arg name="color" value="'1 0 0 1'" /> <!-- red -->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -48,7 +48,7 @@
 
     <!--robot 2-->
     <group ns="$(arg robot_2)">
-        <include file="$(find learning_toponav)/launch/includes/one_robot.launch">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
             <arg name="robot_name" value="$(arg robot_2)" />
             <arg name="color" value="'0 0 1 1'" /> <!-- blue -->
             <arg name="config_yaml" value="$(arg config_yaml)" />
@@ -60,9 +60,9 @@
     </group>
 
     <!--topoplanner-->
-    <arg name="adjlist" value="$(find learning_toponav)/maps/$(arg environment)/adjlist.txt" />
+    <arg name="adjlist" value="$(find multirobot_interference)/maps/$(arg environment)/adjlist.txt" />
     <arg name="planner_logs" default="true" />
-    <node pkg="learning_toponav" type="topoplanner.py" name="topoplanner"
+    <node pkg="multirobot_interference" type="topoplanner.py" name="topoplanner"
           args="--adjlist $(arg adjlist) --environment $(arg environment)
                 --yaml $(arg config_yaml)"
           output="screen" required="true"
@@ -70,8 +70,8 @@
 
     <!--destinations debugger-->
     <arg name="dest_debug" default="false" />
-    <node pkg="learning_toponav" type="destinations_debugger.py" name="destinations_debugger"
-          args="--yaml $(find learning_toponav)/param/topics.yaml" if="$(arg dest_debug)"
+    <node pkg="multirobot_interference" type="destinations_debugger.py" name="destinations_debugger"
+          args="--yaml $(find multirobot_interference)/param/topics.yaml" if="$(arg dest_debug)"
     />
 
     <!-- RVIZ -->

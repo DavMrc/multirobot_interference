@@ -10,7 +10,7 @@
 
   <!-- USING A SINGLE URDF, PASSING THE COLOR AS AN ARGUMENT -->
   <param name="robot_description" command="$(find xacro)/xacro
-    '$(find learning_toponav)/urdf/turtlebot3_$(arg model)_colored.urdf.xacro'
+    '$(find multirobot_interference)/urdf/turtlebot3_$(arg model)_colored.urdf.xacro'
     color:=$(arg color)" />
 
   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">

@@ -5,7 +5,7 @@ import os
 import argparse
 import yaml
 
-from learning_toponav.msg import *
+from multirobot_interference.msg import *
 from Tkinter import *
 from ttk import Separator
 

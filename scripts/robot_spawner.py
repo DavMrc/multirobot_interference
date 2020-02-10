@@ -157,7 +157,7 @@ class RobotSpawner(object):
         
     def launch_robots(self):
         calls = []
-        call = ['roslaunch', 'learning_toponav', 'one_robot_manual.launch']
+        call = ['roslaunch', 'multirobot_interference', 'one_robot_manual.launch']
         
         colors_param = {}
         for r in self.robot_list:
@@ -170,7 +170,7 @@ class RobotSpawner(object):
             
             calls.append(call)
             
-            call = ['roslaunch', 'learning_toponav', 'one_robot_manual.launch']
+            call = ['roslaunch', 'multirobot_interference', 'one_robot_manual.launch']
             colors_param[r['ns']] = r['color']
             
         for ns, color in colors_param.items():

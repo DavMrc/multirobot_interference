@@ -5,12 +5,12 @@
 
     <node pkg="move_base" type="move_base" name="move_base" output="log">
         <!-- INCLUDED PARAMS (from /param dir) -->
-        <rosparam file="$(find learning_toponav)/param/move_base/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find learning_toponav)/param/move_base/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find learning_toponav)/param/move_base/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find learning_toponav)/param/move_base/global_costmap_params.yaml" command="load" />
-        <rosparam file="$(find learning_toponav)/param/move_base/dwa_local_planner_params_$(arg model).yaml" command="load" />
-        <rosparam file="$(find learning_toponav)/param/move_base/move_base_params.yaml" command="load" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/dwa_local_planner_params_$(arg model).yaml" command="load" />
+        <rosparam file="$(find multirobot_interference)/param/move_base/move_base_params.yaml" command="load" />
         <!-- PARAMS -->
         <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
         <!--NON ABILITARE: LA COSTMAP LOCALE RIMANE SEMPRE NULLA-->

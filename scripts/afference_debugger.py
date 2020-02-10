@@ -2,7 +2,7 @@
 
 import rospy
 
-from learning_toponav.msg import AfferenceDebug
+from multirobot_interference.msg import AfferenceDebug
 from visualization_msgs.msg import Marker, MarkerArray
 from std_msgs.msg import Header, ColorRGBA
 from geometry_msgs.msg import Pose, Quaternion, Vector3
