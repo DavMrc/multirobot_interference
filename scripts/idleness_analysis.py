@@ -16,7 +16,7 @@ from destination import Destination
 from prettytable import PrettyTable
 
 
-DEFAULT_PATH = '/home/davide/ros_ws/src/learning/multirobot_interference/idleness/'
+DEFAULT_PATH = (os.path.dirname(os.path.realpath(__file__))).replace('scripts', 'idleness/')
 
 
 class IdlenessLogger(object):
@@ -209,19 +209,17 @@ class IdlenessAnalizer(object):
 
  
 def debug():
-    ia = IdlenessAnalizer()
-    path = DEFAULT_PATH+"house/dumps/4/08-02@16:55-house-4bots_DUMP.txt"
-    dests = ia.load(path)
-    pprint([d.get_visits() for d in dests])
+    print DEFAULT_PATH
 
 
 if __name__ == '__main__':
     robot_range = [3, 4, 5, 6, 7, 8]
-    
+
     ia = IdlenessAnalizer()
     environmental_interferences = ia.interferences()
     # pprint(environmental_interferences)
     ia.plot_interference(robot_range, environmental_interferences)
     # ia.three_plots(robot_range, environmental_interferences)
-    
+
     # debug()
+
