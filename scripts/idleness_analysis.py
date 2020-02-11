@@ -4,7 +4,10 @@ import rospy
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import tkinter as tk
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
 import tkMessageBox
 import time
 import subprocess
