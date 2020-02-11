@@ -196,9 +196,10 @@ class IdlenessAnalizer(object):
     
     @staticmethod
     def three_plots(robot_range, env_averages):
+        figures = ['ro', 'b^', 'gP']
         for i, env in enumerate(env_averages):
             plt.figure(i)
-            plt.plot(robot_range, [e['value'] for e in env['interferences']], 'ro', label=env['environment'])
+            plt.plot(robot_range, [e['value'] for e in env['interferences']], figures[i], label=env['environment'])
             plt.legend()
             plt.xlabel("Robot number", fontsize="xx-large")
             plt.ylabel("Interference", fontsize="xx-large")
@@ -221,8 +222,8 @@ if __name__ == '__main__':
     ia = IdlenessAnalizer()
     environmental_interferences = ia.interferences()
     # pprint(environmental_interferences)
-    ia.plot_interference(robot_range, environmental_interferences)
-    # ia.three_plots(robot_range, environmental_interferences)
+    # ia.plot_interference(robot_range, environmental_interferences)
+    ia.three_plots(robot_range, environmental_interferences)
 
     # debug()
 
