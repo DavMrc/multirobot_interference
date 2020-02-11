@@ -177,7 +177,7 @@ def parse_args():
     args, unknown = parser.parse_known_args()
     
     f = open(args.yaml, 'r')
-    return yaml.load(f)
+    return yaml.safe_load(f)
     
 
 if __name__ == "__main__":

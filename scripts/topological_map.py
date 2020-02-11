@@ -20,7 +20,7 @@ class TopologicalMap(object):
 
     def _load_map(self, filename):
         with open(filename, 'r') as f:
-            return yaml.load(f)
+            return yaml.safe_load(f)
         
     def debug(self):
         print type(self.nodes)

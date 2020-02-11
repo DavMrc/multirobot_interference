@@ -4,10 +4,6 @@ import rospy
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-try:
-    import tkinter as tk
-except ImportError:
-    import Tkinter as tk
 import tkMessageBox
 import time
 import subprocess
@@ -17,6 +13,10 @@ from pprint import pprint
 
 from destination import Destination
 from prettytable import PrettyTable
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
 
 
 DEFAULT_PATH = (os.path.dirname(os.path.realpath(__file__))).replace('scripts', 'idleness/')
@@ -157,7 +157,9 @@ class IdlenessAnalizer(object):
         
             for robot in sorted(robots_num):
                 runs = os.listdir(self.maindir + env + '/dumps/' + robot)
-                runs_averages = []
+                runs.remove('bk')
+                runs_interf_avgs = []
+                true_idl_avgs = []
                 observs_num = 0
             
                 for run in runs:
@@ -170,39 +172,41 @@ class IdlenessAnalizer(object):
                 
                     if observs:  # != []
                         observs_num += len(observs)
-                        runs_averages.append(np.mean([o.get_interference() for o in observs]))
-                    # else:
-                    #     print "No observs for %s" % env + '/dumps/' + robot + '/' + run
+                        runs_interf_avgs.append(np.mean([o.get_interference() for o in observs]))
+                        true_idl_avgs.append(np.mean([o.idleness.get_true() for o in observs]))
             
-                if runs_averages:  # != []
-                    runs_mean = round(np.mean(runs_averages), 4)
-                    robots_averages.append({'robot_num': int(robot), 'value': runs_mean, 'observs': observs_num})
+                if runs_interf_avgs:  # != []
+                    robots_averages.append({
+                        'robot_num': int(robot),
+                        'avg interf': round(np.mean(runs_interf_avgs), 4),
+                        'avg idleness': round(np.mean(true_idl_avgs), 4),
+                        'visits': observs_num
+                    })
         
-            environment_averages.append({'environment': env, 'interferences': robots_averages})
+            environment_averages.append({'environment': env, 'stats': robots_averages})
     
         return environment_averages
-
-    @staticmethod
-    def plot_interference(robot_range, env_averages):
-        plt.plot(robot_range, [e['value'] for e in env_averages[0]['interferences']], 'ro', label="condo_floor")
-        plt.plot(robot_range, [e['value'] for e in env_averages[1]['interferences']], 'b^', label="house")
-        plt.plot(robot_range, [e['value'] for e in env_averages[2]['interferences']], 'gP', label="office")
-        # plt.axis([0, 1, 0, 1])
-        plt.legend()
-        plt.xlabel("Robot number", fontsize="xx-large")
-        plt.ylabel("Interference", fontsize="xx-large")
-
-        plt.show()
     
     @staticmethod
     def three_plots(robot_range, env_averages):
-        figures = ['ro', 'b^', 'gP']
-        for i, env in enumerate(env_averages):
-            plt.figure(i)
-            plt.plot(robot_range, [e['value'] for e in env['interferences']], figures[i], label=env['environment'])
-            plt.legend()
-            plt.xlabel("Robot number", fontsize="xx-large")
-            plt.ylabel("Interference", fontsize="xx-large")
+        for env in env_averages:
+            # plt.xlabel("Robot number", fontsize="xx-large")
+            # plt.ylabel("Interference", fontsize="xx-large")
+            fig, axs = plt.subplots(3)
+            
+            avg_interf = [e['avg interf'] for e in env['stats']]
+            axs[0].plot(robot_range, avg_interf, 'r')
+            axs[0].set_title('Average interference')
+            
+            avg_idl = [e['avg idleness'] for e in env['stats']]
+            axs[1].plot(robot_range, avg_idl, 'g')
+            axs[1].set_title('Average idleness')
+            
+            visits = [e['visits'] for e in env['stats']]
+            axs[2].plot(robot_range, visits, 'b')
+            axs[2].set_title('Visits number')
+            
+            fig.suptitle(env['environment'])
 
         plt.show(block=False)
         try:

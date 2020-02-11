@@ -259,7 +259,7 @@ def parse_args():
 
 def parse_yaml(dir):
     f = open(dir, 'r')
-    return yaml.load(f)
+    return yaml.safe_load(f)
 
 
 if __name__ == '__main__':

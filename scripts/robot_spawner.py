@@ -28,7 +28,7 @@ class RobotSpawner(object):
         self.robot_list = []
         self.some_colors = ['blue', 'yellow', 'green', 'purple', 'orange', 'cyan', 'gray']
         self.yaml_dir = yaml_dir
-        self.yaml = yaml.load(open(yaml_dir))
+        self.yaml = yaml.safe_load(open(yaml_dir))
         
         self.root = Tk()
         self.root.title("Robot spawner")

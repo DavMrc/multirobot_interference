@@ -195,7 +195,7 @@ class TopologicalEditor(object):
 
     def read_map_properties(self, mapprops):
         with open(mapprops, 'r') as f:
-            props = yaml.load(f)
+            props = yaml.safe_load(f)
         return props
 
     def cb_move(self, dists, xpos, ypos):
@@ -272,7 +272,7 @@ class TopologicalEditor(object):
             # with open(join(script_path, '../msgs/') +
             with open(join(script_path, '../') +
                       msg_name + '.yaml', 'r') as raw_msg:
-                self.msg_cache[msg_name] = yaml.load(raw_msg)
+                self.msg_cache[msg_name] = yaml.safe_load(raw_msg)
         return copy.deepcopy(self.msg_cache[msg_name])
 
     def get_new_name(self):

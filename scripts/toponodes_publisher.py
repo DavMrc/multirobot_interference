@@ -73,7 +73,7 @@ def publish_marker_array(topic, marker_array):
 
 def parse_yaml(dir):
     f = open(dir, 'r')
-    return yaml.load(f)
+    return yaml.safe_load(f)
 
 
 def parse_args():
