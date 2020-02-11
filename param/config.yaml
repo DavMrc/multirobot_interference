@@ -15,6 +15,7 @@ ipoint_radius: 0.4
 
 logging: true  # prints useful colored logs to stdout
 simulation_confirm_gui: false
+simulation_dump: false
 simulation_time_measure: 'minutes'  # can be 'minutes' or 'seconds'
 #simulation_time_measure: 'seconds'
 simulation_duration: 1  # time duration of the simulation, based on the time measure above

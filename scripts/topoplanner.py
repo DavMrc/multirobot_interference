@@ -346,18 +346,15 @@ class Planner(object):
             print colored(msg, color=color, attrs=attrs)
         
     def on_shutdown(self):
-        dest_logger = IdlenessLogger(dest_list=self.destinations,
-                                     robots_num=len(self.robots), environment=self.environment)
-        if self.yaml['simulation_confirm_gui']:
-            dest_logger.show_confirm_gui()
+        if self.yaml['simulation_dump']:
+            dest_logger = IdlenessLogger(dest_list=self.destinations,
+                                         robots_num=len(self.robots), environment=self.environment)
+            if self.yaml['simulation_confirm_gui']:
+                dest_logger.show_confirm_gui()
+            else:
+                dest_logger.write_statfile()
         else:
-            dest_logger.write_statfile()
-        # confirm_save = dest_logger.show_confirm_gui()
-        # if confirm_save:
-        #     dest_logger.write_statfile()
-        #     rospy.loginfo('Destination idlenesses have been wrote to %s' % dest_logger.path)
-        # else:
-        #     rospy.logwarn('Destination idlenesses have NOT been saved')
+            rospy.logwarn('Dump file has not been saved.')
     
     
 def parse_yaml(dir):
