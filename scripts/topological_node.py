@@ -1,4 +1,6 @@
-#! /usr/bin/env python
+"""
+    Utility classes for map_editor.py
+"""
 
 
 class Geometry(object):

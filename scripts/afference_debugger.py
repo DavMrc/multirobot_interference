@@ -1,5 +1,24 @@
 #!/usr/bin/env python
 
+"""
+    this file is used to produce a visualization_msgs/Marker msg of type "line".
+    to use it:
+        1) add a node in your launch file
+        --> <node type="afference_debugger.py" pkg="multirobot_interference" name="afference_debugger" />
+        2) in config.yaml, set "debug_afference" to True
+    
+    this node subscribes to '/afference_debug' topic, which is published by toponavigator.py
+    it receives:
+        1) position of the robot
+        2) position of the DWAPlanner afference
+        3) position of the Euclidean afference
+    then draws two arrows from the robot position to the two afferences.
+    
+    the GREEN arrow is the DWAPlanner afference
+    the RED arrow is the Euclidean afference
+    (if you don't see both at the same time, it means that they overlap, hence the afference is the same)
+"""
+
 import rospy
 
 from multirobot_interference.msg import AfferenceDebug

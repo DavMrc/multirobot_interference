@@ -1,3 +1,7 @@
+"""
+    Utility classes for map_editor.py
+"""
+
 import yaml
 from topological_node import TopologicalNode
 

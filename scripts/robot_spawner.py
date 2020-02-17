@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+"""
+    Provides a GUI that allows to select the spawn positions
+    of an arbitrary number of robots using the RViz tool "Clicked point".
+    
+    To use it, simply add this script as node in your launch file. Select
+    all the spawn positions of the robots, then hit the "Spawn" button.
+    Using subprocess.Popen, the script roslaunches as many one_robot_manual.launch
+    files as robots added to the queue.
+"""
+
 import rospy
 import tkFont
 import subprocess
@@ -11,7 +21,10 @@ import webcolors
 from geometry_msgs.msg import PointStamped
 from robot import Robot
 from ttk import Separator
-from tkinter import *
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
 
 
 PADDING = {
@@ -30,7 +43,7 @@ class RobotSpawner(object):
         self.yaml_dir = yaml_dir
         self.yaml = yaml.safe_load(open(yaml_dir))
         
-        self.root = Tk()
+        self.root = tk.Tk()
         self.root.title("Robot spawner")
         self.root.eval('tk::PlaceWindow %s center' % self.root.winfo_toplevel())
         
@@ -39,27 +52,27 @@ class RobotSpawner(object):
         
         row = 0
         title_font = tkFont.Font(family="Ubuntu", size=13, weight="bold")
-        title_lab = Label(self.root, text="Robot details", font=title_font).grid(row=row, column=0, columnspan=4)
+        title_lab = tk.Label(self.root, text="Robot details", font=title_font).grid(row=row, column=0, columnspan=4)
         
         # ----------- prima riga
         row += 1
-        x_lab = Label(self.root, text="x").grid(row=row, column=0, **PADDING)
-        self.x_ent = Entry(self.root, **ENTRY_W)
+        x_lab = tk.Label(self.root, text="x").grid(row=row, column=0, **PADDING)
+        self.x_ent = tk.Entry(self.root, **ENTRY_W)
         self.x_ent.grid(row=row, column=1, **PADDING)
         
-        ns_lab = Label(self.root, text="ns").grid(row=row, column=2, **PADDING)
-        self.ns_ent = Entry(self.root, **ENTRY_W)
+        ns_lab = tk.Label(self.root, text="ns").grid(row=row, column=2, **PADDING)
+        self.ns_ent = tk.Entry(self.root, **ENTRY_W)
         self.ns_ent.insert(0, 'robot_1')
         self.ns_ent.grid(row=row, column=3, **PADDING)
 
         # ----------- seconda riga
         row += 1
-        y_lab = Label(self.root, text="y").grid(row=row, column=0, **PADDING)
-        self.y_ent = Entry(self.root, **ENTRY_W)
+        y_lab = tk.Label(self.root, text="y").grid(row=row, column=0, **PADDING)
+        self.y_ent = tk.Entry(self.root, **ENTRY_W)
         self.y_ent.grid(row=row, column=1, **PADDING)
         
-        color_lab = Label(self.root, text="color").grid(row=row, column=2, **PADDING)
-        self.color_ent = Entry(self.root, **ENTRY_W)
+        color_lab = tk.Label(self.root, text="color").grid(row=row, column=2, **PADDING)
+        self.color_ent = tk.Entry(self.root, **ENTRY_W)
         self.color_ent.insert(0, 'red')
         self.color_ent.grid(row=row, column=3, **PADDING)
 
@@ -71,7 +84,7 @@ class RobotSpawner(object):
 
         # ----------- quinta riga (una riga vuota)
         row += 2
-        self.add_btn = Button(self.root, text="Add", bg="blue", fg="white", command=lambda: self.add_robot())
+        self.add_btn = tk.Button(self.root, text="Add", bg="blue", fg="white", command=lambda: self.add_robot())
         self.add_btn.grid(row=row, column=3)
         
         # ----------- separator
@@ -81,13 +94,13 @@ class RobotSpawner(object):
         
         # ----------- sesta riga
         row += 1
-        robot_list_lab = Label(self.root, text="robots").grid(row=row, column=0, **PADDING)
-        self.robot_list_text = Text(self.root, width=30, height=4)
+        robot_list_lab = tk.Label(self.root, text="robots").grid(row=row, column=0, **PADDING)
+        self.robot_list_text = tk.Text(self.root, width=30, height=4)
         self.robot_list_text.grid(row=row, column=1)
 
         # ----------- settima riga
         row += 1
-        self.add_btn = Button(self.root, text="Start", bg="green", fg="white", command=lambda: self.launch_robots())
+        self.add_btn = tk.Button(self.root, text="Spawn", bg="green", fg="white", command=lambda: self.launch_robots())
         self.add_btn.grid(row=row, column=3)
         
     def mainloop(self):
@@ -184,7 +197,7 @@ class RobotSpawner(object):
     def close_window(self):
         try:
             self.root.destroy()
-        except TclError:
+        except tk.TclError:
             # window already close, ignore exception
             pass
     

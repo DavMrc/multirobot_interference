@@ -1,5 +1,13 @@
 #! /usr/bin/env python
 
+"""
+    this script was lightly adapted from this one:
+    https://github.com/LCAS/spqrel_navigation/blob/master/src/topological_navigation/scripts/map_editor.py
+    
+    it provides the GUI used to set and edit the topological map of each environment
+    has two dependencies: topological_map.py and topological_node.py, both adapted to my usage
+"""
+
 import argparse
 import cv2
 import copy

@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+    Topological planner
+"""
+
 import argparse
 import random
 import yaml
@@ -151,8 +155,8 @@ class Planner(object):
 
     def build_topopath(self, path):
         """
-        :param path: il path, i cui membri sono stringhe del tipo "WayPointX"
-        :return: topopath, ovvero il path in formato messaggio
+        :param (list) path: path whose members are strings alike "WayPointX"
+        :return: topopath msg
         """
         toponav_ipoints = []
         for p in path:
@@ -164,16 +168,11 @@ class Planner(object):
         return RobotTopopath(toponav_ipoints)
 
     def update_available_dests(self):
-        # if robot_N.latest_goal = X and
-        #    robot_M.current_goal = X  --> conflict (below fixed)
-        
-        # for d in self.destinations:
-        #     if add and d.name == add:
-        #         d.available = True
-        #         continue
-        #
-        #     if remove and d.name == remove and remove != add:
-        #         d.available = False
+        """
+        based on the final AND latest goals of the robots
+        (contained in the RobotState msg), updates the status
+        of the destinations
+        """
         
         rate = rospy.Rate(5)
         try:
@@ -225,6 +224,10 @@ class Planner(object):
                     rospy.sleep(1)
                 else:
                     robot = self.available_robots.pop(0)
+                    
+                    # if another RobotState msg for the same
+                    # robot arrives, if the robot is in
+                    # this list, the new msg gets ignored
                     self.temp_busy.append(robot)
                     
                     source = self._get_node_by_name(robot.afference)
@@ -246,6 +249,10 @@ class Planner(object):
             pass
         
     def has_destination(self, src):
+        """
+        returns True if there is at least a dest that
+        is free, otherwise returns False
+        """
         for d in self.destinations:
             if (
                 d.available and
@@ -258,9 +265,12 @@ class Planner(object):
 
     def choose_destination(self, robot_ns, src):
         """
+        chooses a valid destination for the robot with
+        ns == robot_ns
+        
         :param (str) robot_ns: ns the robot
         :param (Destination) src: afference of the robot
-        :return: (Destination) destination
+        :return: (Destination) end destination for the robot
         """
         curr_idl = -1
         selected = []
@@ -282,6 +292,10 @@ class Planner(object):
             return dest
     
     def estimate_idleness(self, robot_ns, source, dest):
+        """
+        provides an estimate for the idleness of dest, supposing
+        that robot_ns travels at constant maximum speed from source to dest
+        """
         make_plan_topic = robot_ns + self.yaml['make_plan']
         
         rospy.wait_for_service(make_plan_topic)
@@ -319,6 +333,12 @@ class Planner(object):
             print "Make_plan call failed: %s" % e
         
     def destinations_log(self):
+        """
+        debug function that publishes a msg containing
+        the status of the destinations
+        
+        destinations_debugger.py subscribes to this topic
+        """
         pub = rospy.Publisher(self.yaml['destinations_log'], DestinationDebug, queue_size=30)
         rate = rospy.Rate(1)
         
@@ -336,16 +356,25 @@ class Planner(object):
             pass
         
     def publish_path(self, path, target_robot):
+        """
+        publishes the topopath under the target_robot's namespace
+        """
         pub = rospy.Publisher(target_robot + self.yaml['robot_topopath'], RobotTopopath, queue_size=10)
         while pub.get_num_connections() < 1:
             rospy.sleep(0.1)
         pub.publish(path)
         
     def log(self, msg, color, attrs=None):
+        """
+        prints to STDOUT useful logs about what's happening
+        """
         if self.logging:
             print colored(msg, color=color, attrs=attrs)
         
     def on_shutdown(self):
+        """
+        when roscore is shutting down, dumps the registered idlenesses
+        """
         if self.yaml['simulation_dump']:
             dest_logger = IdlenessLogger(dest_list=self.destinations,
                                          robots_num=len(self.robots), environment=self.environment)

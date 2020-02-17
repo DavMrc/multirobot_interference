@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+    graphical utility drawn with Tkinter. used to debug the state of
+    all the Destinations and the state of the first two robots
+"""
+
 import rospy
 import os
 import argparse

@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+"""
+    The Toponavigator class. Provides:
+    + RobotState message updates
+    + topological localization (afference)
+    + topological navigation
+        --> interface to the topic where goal positions are sent.
+        --> subscribes to the 'robot_topopath' topic (configured in config.yaml)
+            to receive a RobotTopopath, which is a list of points directely passed
+            to the robot metric navigator (for example, move_base)
+"""
+
 import rospy
 import yaml
 import math
@@ -9,9 +20,8 @@ import argparse
 from robot import Robot
 from termcolor import colored
 from threading import Thread
-from prettytable import PrettyTable
 from multirobot_interference.msg import *
-from std_msgs.msg import Header, String
+from std_msgs.msg import Header
 from nav_msgs.srv import GetPlan
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, Pose, Point, Quaternion
 
@@ -42,10 +52,8 @@ class Toponavigator(object):
         self.movebase_goal_pub = rospy.Publisher(self.robot.ns+self.yaml['goal_topic'], PoseStamped, queue_size=10)
         self.state_publisher = rospy.Publisher(self.robot.ns+self.yaml['robot_state'],
                                                RobotState, queue_size=self.yaml['robot_state_rate']*2)
-        t = Thread(target=self.publish_state)
-        t.start()
-        # for some reason, doesn't need to be .join()-ed
-        # upon receiving rospy.is_shutdown() flag ...
+
+        Thread(target=self.publish_state).start()
     
     def publish_state(self):
         try:
@@ -122,50 +130,54 @@ class Toponavigator(object):
     
         # -- afference calc
         pose_stamped = PoseStamped(amcl_pose.header, amcl_pose.pose.pose)
-        # movebase = self.movebase_afference(amcl_pose=pose_stamped)
-        # eucl = self.eucl_afference(amcl_posit=amcl_posit)
-        # self.debug_aff(amcl_posit, eucl, movebase)
         self.movebase_afference(amcl_pose=pose_stamped)
+
+        if self.yaml['debug_afference']:
+            movebase = self.movebase_afference(amcl_pose=pose_stamped)
+            eucl = self.eucl_afference(amcl_posit=amcl_posit)
+            self.debug_aff(amcl_posit, eucl, movebase)
         
-    # def eucl_afference(self, amcl_posit):
-    #     while not rospy.has_param(self.yaml['interest_points']):
-    #         rospy.sleep(0.1)
-    #     int_points = rospy.get_param(self.yaml['interest_points'])
-    #
-    #     afference = None
-    #     afference_dist = float('inf')
-    #     ip_pos_debug = None  # debug
-    #     for ipoint in int_points:
-    #         ipoint_posit = {
-    #             'x': ipoint['pose']['position']['x'],
-    #             'y': ipoint['pose']['position']['y'],
-    #             'z': ipoint['pose']['position']['z'],
-    #         }
-    #         rbt_posit = {
-    #             'x': amcl_posit.x,
-    #             'y': amcl_posit.y,
-    #             'z': amcl_posit.z
-    #         }
-    #         e_dist = math.hypot(
-    #             ipoint_posit['x'] - rbt_posit['x'],
-    #             ipoint_posit['y'] - rbt_posit['y']
-    #         )
-    #
-    #         # assign minimum distance
-    #         if e_dist < afference_dist:
-    #             afference_dist = e_dist
-    #             afference = ipoint['name']
-    #             ip_pos_debug = Point(ipoint_posit['x'], ipoint_posit['y'], ipoint_posit['z'])
-    #
-    #     # self.robot.afference = afference
-    #     # self.robot.distance = afference_dist
-    #
-    #     # return {
-    #     #     'mode': 'euclidean',
-    #     #     'afference': afference,
-    #     #     'ip_posit': ip_pos_debug,
-    #     #     'dist': afference_dist
-    #     # }
+    def eucl_afference(self, amcl_posit):
+        while not rospy.has_param(self.yaml['interest_points']):
+            rospy.sleep(0.1)
+        int_points = rospy.get_param(self.yaml['interest_points'])
+
+        afference = None
+        afference_dist = float('inf')
+        ip_pos_debug = None  # debug
+        for ipoint in int_points:
+            ipoint_posit = {
+                'x': ipoint['pose']['position']['x'],
+                'y': ipoint['pose']['position']['y'],
+                'z': ipoint['pose']['position']['z'],
+            }
+            rbt_posit = {
+                'x': amcl_posit.x,
+                'y': amcl_posit.y,
+                'z': amcl_posit.z
+            }
+            e_dist = math.hypot(
+                ipoint_posit['x'] - rbt_posit['x'],
+                ipoint_posit['y'] - rbt_posit['y']
+            )
+
+            # assign minimum distance
+            if e_dist < afference_dist:
+                afference_dist = e_dist
+                afference = ipoint['name']
+                ip_pos_debug = Point(ipoint_posit['x'], ipoint_posit['y'], ipoint_posit['z'])
+
+        if self.yaml['afference_mode'] == "Euclidean":
+            self.robot.afference = afference
+            self.robot.distance = afference_dist
+
+        if self.yaml['debug_afference']:
+            return {
+                'mode': 'euclidean',
+                'afference': afference,
+                'ip_posit': ip_pos_debug,
+                'dist': afference_dist
+            }
 
     def movebase_afference(self, amcl_pose):
         while not rospy.has_param(self.yaml['interest_points']):
@@ -174,7 +186,7 @@ class Toponavigator(object):
     
         afference_dist = float('inf')
         afference = None
-        # ip_pos_debug = None
+        ip_pos_debug = None
         for ip in ipoints:
             ip_pose = self.get_ip_posestamp(ip)
             
@@ -187,31 +199,39 @@ class Toponavigator(object):
                 if path_length <= afference_dist:
                     afference_dist = path_length
                     afference = ip['name']
-                    # ip_pos_debug = Point(ip['pose']['position']['x'], ip['pose']['position']['y'], 0)
+                    ip_pos_debug = Point(ip['pose']['position']['x'], ip['pose']['position']['y'], 0)
             except rospy.ServiceException as e:
                 print "Make_plan call failed: %s" % e
-    
-        self.robot.distance = afference_dist
-        self.robot.afference = afference
-
-        # return {
-        #     'mode': 'movebase',
-        #     'afference': afference,
-        #     'ip_posit': ip_pos_debug,
-        #     'dist': afference_dist
-        # }
         
-    # def debug_aff(self, amcl_posit, eucl, movebase):
-    #     if self.robot.ns == '/robot_1':
-    #         msg = AfferenceDebug()
-    #         msg.robot_posit = amcl_posit
-    #         msg.eucl_afference = eucl['ip_posit']
-    #         msg.mvbs_afference = movebase['ip_posit']
-    #
-    #         pub = rospy.Publisher('/afference_debug', AfferenceDebug, queue_size=10)
-    #         while pub.get_num_connections() < 1:
-    #             rospy.sleep(0.1)
-    #         pub.publish(msg)
+        if self.yaml['afference_mode'] == "DWAPlanner":
+            self.robot.distance = afference_dist
+            self.robot.afference = afference
+        
+        if self.yaml['debug_afference']:
+            return {
+                'mode': 'movebase',
+                'afference': afference,
+                'ip_posit': ip_pos_debug,
+                'dist': afference_dist
+            }
+        
+    def debug_aff(self, amcl_posit, eucl, movebase):
+        """
+        debug function that publishes a msg containing
+        + the position of the robot
+        + the position of the afference chosen by Euclidean distance
+        + the position of the afference chosen by DWAPlanner distance
+        """
+        if self.robot.ns == '/robot_1':
+            msg = AfferenceDebug()
+            msg.robot_posit = amcl_posit
+            msg.eucl_afference = eucl['ip_posit']
+            msg.mvbs_afference = movebase['ip_posit']
+
+            pub = rospy.Publisher('/afference_debug', AfferenceDebug, queue_size=10)
+            while pub.get_num_connections() < 1:
+                rospy.sleep(0.1)
+            pub.publish(msg)
     
     @staticmethod
     def get_plan_len(plan):

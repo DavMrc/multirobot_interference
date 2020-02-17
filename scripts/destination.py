@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+"""
+    a file that holds the Idleness, Observation and Destination classes.
+"""
 
 import rospy
 
@@ -26,6 +29,11 @@ class Idleness(object):
         return self.__remaining_idl == self.__true_idl and self.__estim_idl == 0
     
     def is_first(self):
+        """
+        and idleness is considered "first" if it portraits that the
+        Destination never got visited, hence the idleness is max
+        """
+        # TODO: use variable to scale properly if one decides to change the duration of the sim
         return self.__true_idl >= 60.00
     
     def get_estimate_index(self, _type=float):
@@ -132,19 +140,12 @@ class Destination(object):
     
     def get_visits(self):
         """
-        a visit is an idleness which is not null, meaning that
-        true_idl != remaining_idl and estim_idl != 0
+        a visit is an observation that
+            1) is not the first and only one
+            2) is not null
+        
         :return: (list) visits
         """
-        # if len(self.__stats) == 1:
-        #     return 0
-        # else:
-        #     count = 0
-        #     for observ in self.__stats:
-        #         if not observ.idleness.is_null():
-        #             count += 1
-        #
-        #     return count
         visits = []
         for observ in self.__stats:
             if not observ.is_null() and not observ.is_first():

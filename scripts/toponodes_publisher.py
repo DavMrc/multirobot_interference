@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+    Node that reads the topological map saved as *.tpg and
+    publishes the list of interest_points both as parameter
+    and to the 'interest_points' topic (configured in config.yaml)
+"""
+
 import rospy
 import argparse
 import yaml

@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+"""
+    file that holds the Robot class
+"""
+
 import sys
 import os
 path = os.path.dirname(os.path.realpath(__file__))

@@ -1,5 +1,19 @@
 #!/usr/bin/env python
 
+"""
+    this file holds the serializer and deserializer of the idlenesses of the Destinations.
+    IdlenessLogger:
+        serializer, called during the shutdown of topoplanner.py
+        + pickles the Destinations in the appropriate "idleness/$(env)/dumps/$(robotnum)/" subfolder
+        + prints a PrettyTable in the appropriate "idleness/$(env)/$(robotnum)/" subfolder
+        
+    IdlenessAnalizer:
+        deserializer, called when running this file alone (NOT AS NODE)
+        + unpickles the Destinations
+        + analyzes the Destinations
+        + shows a graphical result
+"""
+
 import rospy
 import os
 import numpy as np
@@ -157,7 +171,6 @@ class IdlenessAnalizer(object):
         
             for robot in sorted(robots_num):
                 runs = os.listdir(self.maindir + env + '/dumps/' + robot)
-                runs.remove('bk')
                 runs_interf_avgs = []
                 true_idl_avgs = []
                 observs_num = 0
@@ -188,25 +201,51 @@ class IdlenessAnalizer(object):
         return environment_averages
     
     @staticmethod
+    def single_plot(robot_range, env):
+        fig, axs = plt.subplots(3)
+    
+        avg_interf = [e['avg interf'] for e in env['stats']]
+        axs[0].plot(robot_range, avg_interf, 'r')
+        axs[0].set_title('Average interference')
+    
+        avg_idl = [e['avg idleness'] for e in env['stats']]
+        axs[1].plot(robot_range, avg_idl, 'g')
+        axs[1].set_title('Average idleness')
+    
+        visits = [e['visits'] for e in env['stats']]
+        axs[2].plot(robot_range, visits, 'b')
+        axs[2].set_title('Visits number')
+    
+        fig.suptitle(env['environment'])
+        
+        plt.show()
+    
+    @staticmethod
     def three_plots(robot_range, env_averages):
+        # ticks = plt.xticks(fontsize=25)
         for env in env_averages:
             # plt.xlabel("Robot number", fontsize="xx-large")
             # plt.ylabel("Interference", fontsize="xx-large")
             fig, axs = plt.subplots(3)
             
             avg_interf = [e['avg interf'] for e in env['stats']]
-            axs[0].plot(robot_range, avg_interf, 'r')
-            axs[0].set_title('Average interference')
-            
             avg_idl = [e['avg idleness'] for e in env['stats']]
-            axs[1].plot(robot_range, avg_idl, 'g')
-            axs[1].set_title('Average idleness')
-            
             visits = [e['visits'] for e in env['stats']]
-            axs[2].plot(robot_range, visits, 'b')
-            axs[2].set_title('Visits number')
             
-            fig.suptitle(env['environment'])
+            axs[0].plot(robot_range, avg_interf, 'r', marker="o")
+            # axs[0].set_xticks(ticks)
+            axs[0].set_title('Average interference', fontsize=18)
+            
+            axs[1].plot(robot_range, avg_idl, 'g', marker="o")
+            # axs[1].set_xticks(ticks)
+            axs[1].set_title('Average idleness', fontsize=18)
+            
+            axs[2].plot(robot_range, visits, 'b', marker="o")
+            # axs[2].set_xticks(ticks)
+            axs[2].set_title('Visits number', fontsize=18)
+            
+            fig.suptitle(env['environment'], fontsize=22)
+            fig.tight_layout()
 
         plt.show(block=False)
         try:
@@ -215,10 +254,6 @@ class IdlenessAnalizer(object):
             pass
         plt.close('all')
 
- 
-def debug():
-    print DEFAULT_PATH
-
 
 if __name__ == '__main__':
     robot_range = [3, 4, 5, 6, 7, 8]
@@ -226,8 +261,4 @@ if __name__ == '__main__':
     ia = IdlenessAnalizer()
     environmental_interferences = ia.interferences()
     # pprint(environmental_interferences)
-    # ia.plot_interference(robot_range, environmental_interferences)
     ia.three_plots(robot_range, environmental_interferences)
-
-    # debug()
-
