@@ -12,6 +12,8 @@ robot_max_speed: 0.26
 robot_state_rate: 2
 
 ipoint_radius: 0.4
+afference_mode: 'DWAPlanner'  # can be 'DWAPlanner' or 'Euclidean' based on the strategy
+debug_afference: false
 
 logging: true  # prints useful colored logs to stdout
 simulation_confirm_gui: false
