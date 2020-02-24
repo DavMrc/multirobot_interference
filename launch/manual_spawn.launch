@@ -18,7 +18,7 @@
     </include>
 
     <!--gzserver killer-->
-	<node pkg="my_fun" type="gz_killer.py" name="gz_killer" output="screen" />
+	<node pkg="multirobot_interference" type="gz_killer.py" name="gz_killer" output="screen" />
 
     <!-- map server -->
     <node pkg="map_server" type="map_server" name="map_loader" args="$(arg metric_map)" />

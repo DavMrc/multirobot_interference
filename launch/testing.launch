@@ -4,7 +4,7 @@
     <arg name="topomap" default="$(find multirobot_interference)/maps/$(arg environment)/topomap.tpg" />
     <arg name="config_yaml" default="$(find multirobot_interference)/param/config.yaml" />
     <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/testing.rviz" />
-    <arg name="gazebo_gui" default="false" /> <!-- ACTIVATE GAZEBO GUI -->
+    <arg name="gazebo_gui" default="true" /> <!-- ACTIVATE GAZEBO GUI -->
     <arg name="rqt_console" default="false" /> <!-- LAUNCH RQT CONSOLE -->
 
     <!-- GAZEBO -->
@@ -18,7 +18,7 @@
     </include>
 
     <!--gzserver killer-->
-	<node pkg="my_fun" type="gz_killer.py" name="gz_killer" output="screen" />
+	<node pkg="multirobot_interference" type="gz_killer.py" name="gz_killer" output="screen" />
 
     <!-- map server -->
     <node pkg="map_server" type="map_server" name="map_loader" args="$(arg metric_map)" />
