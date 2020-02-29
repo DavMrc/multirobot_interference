@@ -2,11 +2,11 @@
     <arg name="environment" default="house" />
     <arg name="edit" default="false" />
 
-    <arg name="metric_map" default="$(find multirobot_interference)/maps/$(arg environment)/metric.yaml" />
-    <arg name="outmap" default="$(find multirobot_interference)/maps/$(arg environment)/topomap.tpg" />
+    <arg name="metric_map" default="$(find multirobot_interference)/envs/$(arg environment)/metric.yaml" />
+    <arg name="outmap" default="$(find multirobot_interference)/envs/$(arg environment)/topomap.tpg" />
     <arg name="in_topomap" default="$(arg outmap)" />
-    <arg name="edgelist_dir" default="$(find multirobot_interference)/maps/$(arg environment)/adjlist.txt" />
-    <arg name="png" default="$(find multirobot_interference)/maps/$(arg environment)/visualimage.png" />
+    <arg name="edgelist_dir" default="$(find multirobot_interference)/envs/$(arg environment)/adjlist.txt" />
+    <arg name="png" default="$(find multirobot_interference)/envs/$(arg environment)/visualimage.png" />
 
     <node pkg="multirobot_interference" type="map_editor.py" name="map_editor"
           args="--empty true --map $(arg metric_map)

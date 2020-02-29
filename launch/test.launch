@@ -6,8 +6,8 @@
     <arg name="robot_2" value="robot_2" />
 
     <arg name="environment" default="house" />
-    <arg name="metric_map" default="$(find multirobot_interference)/maps/$(arg environment)/metric.yaml" />
-    <arg name="topomap" default="$(find multirobot_interference)/maps/$(arg environment)/topomap.tpg" />
+    <arg name="metric_map" default="$(find multirobot_interference)/envs/$(arg environment)/metric.yaml" />
+    <arg name="topomap" default="$(find multirobot_interference)/envs/$(arg environment)/topomap.tpg" />
     <arg name="config_yaml" default="$(find multirobot_interference)/param/config.yaml" />
     <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/multi_toponav.rviz" />
     <arg name="gazebo_gui" default="false" /> <!-- LAUNCH GAZEBO CLIENT -->
@@ -15,7 +15,7 @@
 
     <!-- GAZEBO -->
     <include file="$(find multirobot_interference)/launch/includes/main_gazebo.launch">
-        <arg name="world_name" value="$(find multirobot_interference)/worlds/$(arg environment).world"/>
+        <arg name="world_name" value="$(find multirobot_interference)/envs/$(arg environment)/world.world"/>
         <arg name="paused" value="false"/>
         <arg name="use_sim_time" value="true"/>
         <arg name="gui" value="$(arg gazebo_gui)"/>
@@ -62,7 +62,7 @@
 
     <!--topoplanner-->
     <arg name="planner_logs" default="true" />
-    <arg name="adjlist" value="$(find multirobot_interference)/maps/$(arg environment)/adjlist.txt" />
+    <arg name="adjlist" value="$(find multirobot_interference)/envs/$(arg environment)/adjlist.txt" />
     <node pkg="multirobot_interference" type="topoplanner.py" name="topoplanner"
           args="--adjlist $(arg adjlist) --environment $(arg environment)
                 --yaml $(arg config_yaml)"
