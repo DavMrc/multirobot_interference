@@ -72,7 +72,7 @@ class IdlenessLogger(object):
         self.tk_root.mainloop()
     
     def write_statfile(self):
-        datetime = time.strftime("%d-%m@%H:%M", time.localtime())
+        datetime = time.strftime("%d-%m@%H_%M", time.localtime())
         subdir = "%s/%s/" % (self.environment, self.robots_num)
         filename = "%s-%s-%sbots.txt" % (datetime, self.environment, self.robots_num)
         
