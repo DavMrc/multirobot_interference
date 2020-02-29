@@ -1,6 +1,5 @@
 <launch>
     <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-    <!-- @ REQUIRED @ robot name (same as namespace), color and spawn position -->
     <arg name="robot_name" />
     <arg name="color" />
     <arg name="x_pos" />
@@ -10,10 +9,7 @@
 
     <param name="tf_prefix" value="$(arg robot_name)" />
 
-    <!--setta l'associazione (colore, ns) del robot-->
-    <!--<rosparam ns="/colors" param="$(arg color)" subst_value="true" >-->
-    <!--    $(arg robot_name)-->
-    <!--</rosparam>-->
+    <!--sets the association (color, ns) of the robot-->
     <rosparam ns="/colors" param="$(arg robot_name)" subst_value="true" >
         $(arg color)
     </rosparam>

@@ -1,6 +1,7 @@
 <launch>
+<!--    this file is launched through subprocess.Popen in the script 'robot_spawner.py'-->
+
     <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-    <!-- @ REQUIRED @ robot name (same as namespace), color and spawn position -->
     <arg name="robot_name" />
     <arg name="color" />
     <arg name="x_pos" />

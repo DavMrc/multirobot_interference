@@ -2,9 +2,13 @@
     <arg name="config_yaml" />
 
     <!--
-    FIRST POS: office
-    SECOND: house
-    THIRD: condo_floor
+    there are three possible spawn positions for every robot, one
+    for each provided environment. comment out THE SAME LINE for
+    every robot you want to spawn.
+
+    FIRST LINE: office
+    SECOND  LINE: house
+    THIRD LINE: condo_floor
     -->
 
     <!--robot 1-->

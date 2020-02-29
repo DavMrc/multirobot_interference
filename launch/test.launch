@@ -1,10 +1,16 @@
 <launch>
+<!--    this file should be used to test if everything works correctely.-->
+<!--    it can be launched for experiments, but its recommended to use start.launch + robot.launch-->
+
+    <arg name="robot_1" value="robot_1" />
+    <arg name="robot_2" value="robot_2" />
+
     <arg name="environment" default="house" />
     <arg name="metric_map" default="$(find multirobot_interference)/maps/$(arg environment)/metric.yaml" />
     <arg name="topomap" default="$(find multirobot_interference)/maps/$(arg environment)/topomap.tpg" />
     <arg name="config_yaml" default="$(find multirobot_interference)/param/config.yaml" />
-    <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/testing.rviz" />
-    <arg name="gazebo_gui" default="true" /> <!-- ACTIVATE GAZEBO GUI -->
+    <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/multi_toponav.rviz" />
+    <arg name="gazebo_gui" default="false" /> <!-- LAUNCH GAZEBO CLIENT -->
     <arg name="rqt_console" default="false" /> <!-- LAUNCH RQT CONSOLE -->
 
     <!-- GAZEBO -->
@@ -17,7 +23,7 @@
         <arg name="debug" value="false"/>
     </include>
 
-    <!--gzserver killer-->
+    <!--gz killer-->
 	<node pkg="multirobot_interference" type="gz_killer.py" name="gz_killer" output="screen" />
 
     <!-- map server -->
@@ -28,14 +34,35 @@
           args="--topomap $(arg topomap) --yaml $(arg config_yaml)"
     />
 
-    <!--robots-->
-    <include file="$(find multirobot_interference)/launch/includes/robots.launch">
-        <arg name="config_yaml" value="$(arg config_yaml)" />
-    </include>
+    <!--robot 1-->
+    <group ns="$(arg robot_1)">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
+            <arg name="robot_name" value="$(arg robot_1)" />
+            <arg name="color" value="'1 0 0 1'" /> <!-- red -->
+            <arg name="config_yaml" value="$(arg config_yaml)" />
+
+            <arg name="x_pos" value="1" />
+            <arg name="y_pos" value="1" />
+            <arg name="z_pos" value="0" />
+        </include>
+    </group>
+
+    <!--robot 2-->
+    <group ns="$(arg robot_2)">
+        <include file="$(find multirobot_interference)/launch/includes/one_robot.launch">
+            <arg name="robot_name" value="$(arg robot_2)" />
+            <arg name="color" value="'0 0 1 1'" /> <!-- blue -->
+            <arg name="config_yaml" value="$(arg config_yaml)" />
+
+            <arg name="x_pos" value="-1" />
+            <arg name="y_pos" value="1" />
+            <arg name="z_pos" value="0" />
+        </include>
+    </group>
 
     <!--topoplanner-->
-    <arg name="adjlist" value="$(find multirobot_interference)/maps/$(arg environment)/adjlist.txt" />
     <arg name="planner_logs" default="true" />
+    <arg name="adjlist" value="$(find multirobot_interference)/maps/$(arg environment)/adjlist.txt" />
     <node pkg="multirobot_interference" type="topoplanner.py" name="topoplanner"
           args="--adjlist $(arg adjlist) --environment $(arg environment)
                 --yaml $(arg config_yaml)"
@@ -45,7 +72,7 @@
     <!--destinations debugger-->
     <arg name="dest_debug" default="false" />
     <node pkg="multirobot_interference" type="destinations_debugger.py" name="destinations_debugger"
-          args="--yaml $(arg config_yaml)" if="$(arg dest_debug)"
+          args="--yaml $(find multirobot_interference)/param/topics.yaml" if="$(arg dest_debug)"
     />
 
     <!-- RVIZ -->
