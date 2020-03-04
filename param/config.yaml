@@ -1,7 +1,6 @@
 robot_state: '/state'
 robot_topopath: '/topopath'
 interest_points: '/interest_points'
-afference: '/afference'
 destinations_log: '/destinations_log'
 pose_topic: '/amcl_pose'
 goal_topic: '/move_base_simple/goal'
