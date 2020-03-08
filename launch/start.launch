@@ -4,7 +4,7 @@
     <arg name="topomap" default="$(find multirobot_interference)/envs/$(arg environment)/topomap.tpg" />
     <arg name="config_yaml" default="$(find multirobot_interference)/param/config.yaml" />
     <arg name="rviz_config" default="-d $(find multirobot_interference)/rviz/testing.rviz" />
-    <arg name="gazebo_gui" default="true" /> <!-- ACTIVATE GAZEBO GUI -->
+    <arg name="gazebo_gui" default="false" /> <!-- ACTIVATE GAZEBO GUI -->
     <arg name="rqt_console" default="false" /> <!-- LAUNCH RQT CONSOLE -->
 
     <!-- GAZEBO -->
@@ -31,6 +31,7 @@
     <!--robots-->
     <include file="$(find multirobot_interference)/launch/robots.launch">
         <arg name="config_yaml" value="$(arg config_yaml)" />
+        <arg name="environment" value="$(arg environment)" />
     </include>
 
     <!--topoplanner-->
